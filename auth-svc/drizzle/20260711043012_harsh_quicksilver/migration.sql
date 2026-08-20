@@ -12,7 +12,7 @@
 -- • To safely sync the Drizzle schema with your existing Prisma database in development 
 --   or production without losing data, "do NOT run this SQL file manually". 
 -- • ✔ Instead, simply run: npx drizzle-kit pull --init
-/*
+
 CREATE TABLE "Users" (
 	"id" uuid PRIMARY KEY,
 	"username" varchar(255) NOT NULL,
