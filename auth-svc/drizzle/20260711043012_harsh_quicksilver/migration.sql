@@ -11,7 +11,9 @@
 -- 🛡️ THE SAFE APPROACH (NO DATA LOSS):
 -- • To safely sync the Drizzle schema with your existing Prisma database in development 
 --   or production without losing data, "do NOT run this SQL file manually". 
--- • ✔ Instead, simply run: npx drizzle-kit pull --init
+-- • ✔ Instead, simply run: bunx drizzle-kit pull --init this will automatically apply migrations
+--   than you can uncomment this(for testing on empty database) or remain commented in prod it does not 
+--   matter the drizzle will apply next new migrations even it is commented or not (only if you use first : bunx drizzle-kit pull --init  )
 
 CREATE TABLE "Users" (
 	"id" uuid PRIMARY KEY,
