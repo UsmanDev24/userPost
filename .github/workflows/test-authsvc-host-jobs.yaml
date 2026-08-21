@@ -3,7 +3,7 @@ on:
   push
 
 jobs:
-  test-authsvc-using-local-job:
+  test-authsvc-using-host-job:
     runs-on: ubuntu-latest
     environment: test
     defaults:

@@ -2,7 +2,7 @@ name: integration tests for authsvc using docker build push action
 on:
   push
 jobs: 
-  test-authsvc:
+  test-authsvc-docker-build-push-action:
     runs-on: ubuntu-latest
     environment: test
     defaults:
