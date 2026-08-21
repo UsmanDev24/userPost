@@ -31,9 +31,9 @@ jobs:
         run: >
           docker buildx build
           --target prerelease
-          --cache-from=type=gha \
-          --cache-to=type=gha,mode=max \
-          --load \
+          --cache-from=type=gha 
+          --cache-to=type=gha,mode=max 
+          --load 
           --progress=plain
           -t authsvc-test:latest .
       
