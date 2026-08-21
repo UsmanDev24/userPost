@@ -12,7 +12,7 @@
     "drizzlekit-dev": "dotenvx run -f .env.development -- bun drizzle-kit",
     "app": "dotenvx run -f .env.development -- bun ./src/app.mjs",
     "build": "tsc",
-    "test": "dotenvx run -f .env.development -- bun test --watch"
+    "test": "dotenvx run -f .env.development -- bun test"
   },
   "author": "Usman Ghani",
   "license": "",
