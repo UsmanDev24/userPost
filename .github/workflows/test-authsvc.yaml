@@ -21,32 +21,21 @@ jobs:
           --health-interval 3s
           --health-timeout 1s
           --health-retries 1
-        ports: 
-          - 5432:5432
         
-    
     steps:
-      - name: checkout code
+      - name: Checkout code
         uses: actions/checkout@v6
       
-      - name: install bun
-        uses: oven-sh/setup-bun@v2
-
-      - name: install deps
-        run: bun install --frozen-lockfile
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
       
-      - name: Migrate Database
-        run: bun run drizzlekit-dev migrate
+      - name: Build Docker Image
+        run:  docker build --target prerelease -t authsvc-test:latest .
+      
+      - name: Run Tests in Container
+        run: docker run --rm authsvc-test:latest bun run tests 
         env:
-          DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.DOTENV_PRIVATE_KEY_DEVELOPMENT}}
-
-      - name: build code
-        run: bun run build
-
-      - name: test code
-        env:
-          DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.DOTENV_PRIVATE_KEY_DEVELOPMENT}}
-        run: bun run test
+          DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.DOTENV_PRIVATE_KEY_DEVELOPMENT }}
 
       
       
