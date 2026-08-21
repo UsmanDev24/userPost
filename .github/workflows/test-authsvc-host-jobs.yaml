@@ -1,0 +1,45 @@
+name: "integration tests for authsvc Using Host Job"
+on: 
+  push
+
+jobs:
+  test-authsvc-using-local-job:
+    runs-on: ubuntu-latest
+    environment: test
+    defaults:
+      run:
+        working-directory: ./auth-svc
+    services:
+      db-authsvc:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+          POSTGRES_USER: git-action
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 4s
+          --health-timeout 2s
+          --health-retries 2
+        ports:
+          - 5432:5432
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v6
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install Deps
+        run: bun install --frozen-lockfile
+      
+      - name: Migrate DataBase
+        run: bun drizzle-kit migrate
+        env:
+          DATABASE_URL: postgresql://git-action:test@localhost:5432/test
+      - name: Run Tests
+        run: bun run test
+        env:
+          DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.DOTENV_PRIVATE_KEY_DEVELOPMENT }}
+          DATABASE_URL: postgresql://git-action:test@localhost:5432/test
