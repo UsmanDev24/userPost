@@ -18,7 +18,23 @@ jobs:
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
+      - name: Restore postgres Image Cache if it exists
+        id: cache-docker-postgres
+        uses: actions/cache@v3
+        with:
+          path: ci/cache/docker/postgres
+          key: cache-docker-postgres-18.6
+
+      - name: Update postgres Image Cache if cache miss
+        
+        if: steps.cache-docker-postgres.outputs.cache-hit != 'true'
+        run: docker pull postgres:18.6 && mkdir -p ci/cache/docker/postgres && docker image save postgres:18.6 --output ./ci/cache/docker/postgres/postgres-18.6.tar
+
+      - name: Use postgres Image Cache if cache hit
+        if: steps.cache-docker-postgres.outputs.cache-hit == 'true'
+        run: docker image load --input ./ci/cache/docker/postgres/postgres-18.6.tar
+
       - name: Build Docker Image with Cloud Cache
         uses: docker/build-push-action@v6
         with:
@@ -33,7 +49,7 @@ jobs:
           cache-to: type=gha,mode=max
       
       - name: Run Tests Using Docker Compose
-        run: docker compose -f ./compose.test.yaml run --rm test
+        run: docker compose -f ./compose.test.yaml run --rm
         env:
           DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.DOTENV_PRIVATE_KEY_DEVELOPMENT }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
