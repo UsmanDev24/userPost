@@ -2,7 +2,7 @@ name: integration tests for authsvc using docker build push action
 on:
   push
 jobs: 
-  test-authsvc-docker-build-push-action:
+  test-authsvc:
     runs-on: ubuntu-latest
     environment: test
     defaults:
@@ -35,7 +35,8 @@ jobs:
           file: ./auth-svc/dockerfile
           target: prerelease
           tags: authsvc-test:latest
-          
+          provenance: false
+          sbom: false
           # Force export back to the local Docker daemon for 'docker run'
           load: true 
           

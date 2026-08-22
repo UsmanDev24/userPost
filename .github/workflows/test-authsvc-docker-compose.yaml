@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
+name: integration tests for authsvc using docker compose up
+
+on: 
+  push:
+
+jobs:
+  test-authsvc:
+    runs-on: ubuntu-latest
+    environment: test
+    defaults:
+      run:
+        working-directory: ./auth-svc
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build Docker Image with Cloud Cache
+        uses: docker/build-push-action@v6
+        with:
+          context: ./auth-svc
+          file: ./auth-svc/dockerfile
+          target: prerelease
+          tags: authsvc-test:latest
+          provenance: false
+          sbom: false
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Run Tests Using Docker Compose
+        run: docker compose -f ./compose.test.yaml run --rm test
+        env:
+          DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.DOTENV_PRIVATE_KEY_DEVELOPMENT }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      
+
+
+    
