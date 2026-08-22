@@ -49,7 +49,7 @@ jobs:
           cache-to: type=gha,mode=max
       
       - name: Run Tests Using Docker Compose
-        run: docker compose -f ./compose.test.yaml run --rm
+        run: docker compose -f ./compose.test.yaml run --rm test
         env:
           DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.DOTENV_PRIVATE_KEY_DEVELOPMENT }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
