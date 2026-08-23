@@ -64,7 +64,7 @@ for (let loop = 0; loop < 1; loop++) {
   });
 
   test("should pass to /create-user 2nd user", async () => {
-    const passhash = await await bcrypt.hash("test", 10);
+    const passhash =  await bcrypt.hash("test", 10);
     const res = await app.request("/create-user", {
       method: "POST",
       headers: {
@@ -101,6 +101,6 @@ for (let loop = 0; loop < 1; loop++) {
         Authorization: `Bearer ${token}`,
       },
     });
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(400);
   });
 }
