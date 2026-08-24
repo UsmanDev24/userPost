@@ -1,0 +1,49 @@
+name: "integration tests for authsvc Using Container Job"
+on: 
+  push
+
+jobs:
+  authsvc-test:
+    runs-on: ubuntu-latest
+    container: 
+      image: oven/bun:1.4
+      env: 
+        NODE_ENV: test
+      volumes:
+        - docker_images:/temp/docker_images
+    
+    environment: test
+    defaults:
+      run:
+        working-directory: ./auth-svc
+    services:
+      db-authsvc:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD}}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER}}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB}}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 4s
+          --health-timeout 2s
+          --health-retries 2
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v6
+
+    
+      - name: Install Deps
+        run: bun install --frozen-lockfile
+      
+      - name: Migrate DataBase
+        run: bun run drizzlekit-dev migrate
+        env:
+           DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.DOTENV_PRIVATE_KEY_DEVELOPMENT }}
+      - name: Run Tests
+        run: bun run test
+        env:
+          DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.DOTENV_PRIVATE_KEY_DEVELOPMENT }}
+          
+
+      
