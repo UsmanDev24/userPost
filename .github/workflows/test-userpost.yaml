@@ -1,0 +1,89 @@
+name: integration tests for userPost
+on:
+  push: 
+
+jobs:
+  test-authsvc:
+    uses: ./.github/workflows/test-authsvc-container-jobs.yaml
+
+  test-userPost:
+    needs: test-authsvc
+    runs-on: ubuntu-latest
+    container: 
+      image: oven/bun:1.4-alpine
+
+    services:
+      db-authsvc:
+        image: postgres:alpine
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.TEST_AUTHSVC_POSTGRES_PASSWORD}}
+          POSTGRES_USER: ${{ secrets.TEST_AUTHSVC_POSTGRES_USER}}
+          POSTGRES_DB: ${{ secrets.TEST_AUTHSVC_POSTGRES_DB}}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 4s
+          --health-timeout 2s
+          --health-retries 2
+
+      db-userpost:
+        image: postgres:alpine
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.TEST_POSTSVC_POSTGRES_PASSWORD}}
+          POSTGRES_USER: ${{ secrets.TEST_POSTSVC_POSTGRES_USER}}
+          POSTGRES_DB: ${{ secrets.TEST_POSTSVC_POSTGRES_DB}}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 4s
+          --health-timeout 2s
+          --health-retries 2
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v6
+
+      - name: Check Workdir
+        run: pwd
+        
+      - name: Cache Bun Dependencies
+        uses: actions/cache@v6
+        with:
+          # This path is relative to /github/workspace
+          # It translates to /github/workspace/.bun-cache
+          path: .bun-cache 
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+          restore-keys: |
+                      ${{ runner.os }}-bun
+
+      
+      - name: Install deps for authsvc
+        env:
+          # Tells bun to use our cached path inside the container workspace
+          BUN_INSTALL_CACHE_DIR: ${{ github.workspace }}/.bun-cache
+        run: cd ./auth-svc && bun install --frozen-lockfile
+      
+      - name: Authsvc Migrate DataBase
+        run: cd ./auth-svc && bun run drizzlekit-dev migrate
+        env:
+           DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.AUTHSVC_DOTENV_PRIVATE_KEY_DEVELOPMENT }}
+
+      - name: Run Authsvc in background
+        run : cd ./auth-svc && bun run dev
+        background: true
+        env:
+          DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.AUTHSVC_DOTENV_PRIVATE_KEY_DEVELOPMENT }}
+      
+      - name: Install deps for postsvc
+        env:
+          BUN_INSTALL_CACHE_DIR: ${{ github.workspace }}/.bun-cache
+        run: cd ./post-svc && bun install --frozen-lockfile
+      
+      - name: Postsvc Migrate DataBase
+        run: cd ./post-svc && bun run drizzlekit-dev migrate
+        env:
+           DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.POSTSVC_DOTENV_PRIVATE_KEY_DEVELOPMENT }}
+
+      - name: Run Authsvc in background
+        run : bun run test run
+        env:
+          DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.POSTSVC_DOTENV_PRIVATE_KEY_DEVELOPMENT }}
+      
+      
