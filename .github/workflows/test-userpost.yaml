@@ -82,8 +82,8 @@ jobs:
         env:
            DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.POSTSVC_DOTENV_PRIVATE_KEY_DEVELOPMENT }}
 
-      - name: Run Authsvc in background
-        run : bun run test run
+      - name: Run UserPost Tests
+        run : cd ./post-svc && bun run test run
         env:
           DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.POSTSVC_DOTENV_PRIVATE_KEY_DEVELOPMENT }}
       
