@@ -16,6 +16,26 @@ jobs:
       - name: Create Custom Docker Network
         run: docker network create authsvc-net
 
+      - name: Cache Docker Image Archive
+        id: image-cache
+        uses: actions/cache@v6
+        with:
+          path: /tmp/docker-images
+          key: ${{ runner.os }}-docker-postgres-18
+          
+      # Step 2: If cache is found, load the image into the Docker daemon local registry
+      - name: Load Cached Docker Image
+        if: steps.image-cache.outputs.cache-hit == 'true'
+        run: docker load --input /tmp/docker-images/postgres.tar
+
+      # Step 3: If cache is missed, pull the fresh image and archive it for the "Save" step
+      - name: Pull and Archive Docker Image
+        if: steps.image-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p /tmp/docker-images
+          docker pull postgres:18
+          docker save --output /tmp/docker-images/postgres.tar postgres:18
+
       - name: Start PostgreSQL Container
         run: >
           docker run -d --rm --name db-authsvc --network authsvc-net
