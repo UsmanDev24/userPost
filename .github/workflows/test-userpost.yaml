@@ -78,14 +78,15 @@ jobs:
         run: cd ./post-svc && bun install --frozen-lockfile
       
       - name: Postsvc Migrate DataBase
-        run: cd ./post-svc && bun run postbuild-dev
+        run: cd ./post-svc &&  bun prisma-dev generate && bun run postbuild-dev
         env:
            DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.POSTSVC_DOTENV_PRIVATE_KEY_DEVELOPMENT }}
 
-      - name: Run Authsvc in background
-        run : bun run test run
+      - name: Run UserPost Tests
+        run : cd ./post-svc && bun run test run
         env:
           DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.POSTSVC_DOTENV_PRIVATE_KEY_DEVELOPMENT }}
+          USER_SERVICE_URL: http://0.0.0.0:5859
       
       - name: stop Authsvc background
         cancel: authsvc-dev
