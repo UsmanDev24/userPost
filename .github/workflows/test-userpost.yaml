@@ -66,6 +66,7 @@ jobs:
            DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.AUTHSVC_DOTENV_PRIVATE_KEY_DEVELOPMENT }}
 
       - name: Run Authsvc in background
+        id: authsvc-dev
         run : cd ./auth-svc && bun run dev
         background: true
         env:
@@ -77,7 +78,7 @@ jobs:
         run: cd ./post-svc && bun install --frozen-lockfile
       
       - name: Postsvc Migrate DataBase
-        run: cd ./post-svc && bun run drizzlekit-dev migrate
+        run: cd ./post-svc && bun run postbuild-dev
         env:
            DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.POSTSVC_DOTENV_PRIVATE_KEY_DEVELOPMENT }}
 
@@ -86,4 +87,5 @@ jobs:
         env:
           DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.POSTSVC_DOTENV_PRIVATE_KEY_DEVELOPMENT }}
       
-      
+      - name: stop Authsvc background
+        cancel: authsvc-dev
