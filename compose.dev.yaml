@@ -69,6 +69,23 @@ services:
       db-userpost:
         condition: service_healthy
       
+  userpost-test:
+    build:
+      context: ./post-svc
+      target: prerelease
+    image: userpost-dev:latest
+    environment: 
+      - DOTENV_PRIVATE_KEY_DEVELOPMENT
+    command: ["bun", "run", "test", "run"]
+    networks:
+      - frontnet
+      - svcnet
+    depends_on:
+      authsvc:
+        condition: service_started
+      userpost-build: 
+        condition: service_completed_successfully
+
   userpost:
     build:
       context: ./post-svc

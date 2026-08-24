@@ -11,7 +11,7 @@
     "prisma-pro": "NODE_ENV=production dotenvx run --env-file=.env.production -- prisma --config=./src/prisma.config.ts",
     "init-catg-dev": "dotenvx run --env-file=.env.development -- bun ./src/models/init-categories.mjs",
     "init-pics-dev": "dotenvx run --env-file=.env.development -- bun ./src/models/set-prisma-pics.mjs",
-    "build": "bunx --bun  prisma --config=./src/prisma.config.ts generate && tsc && bun run copy-assets",
+    "build": "bun prisma-dev generate && tsc && bun run copy-assets",
     "postbuild-dev": "bun run prisma-dev migrate dev && bun run init-catg-dev",
     "postbuild-pro": "NODE_ENV=production bun run prisma-pro migrate deploy && bun run init-catg-pro",
     "copy-assets": "cp -r src/public/assets dist/public; cp -r src/views dist/; cp -r src/partials dist/",
