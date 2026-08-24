@@ -86,6 +86,7 @@ jobs:
         run : cd ./post-svc && bun run test run
         env:
           DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.POSTSVC_DOTENV_PRIVATE_KEY_DEVELOPMENT }}
+          USER_SERVICE_URL: http://0.0.0.0:5859
       
       - name: stop Authsvc background
         cancel: authsvc-dev
