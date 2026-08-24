@@ -5,7 +5,7 @@ on:
 jobs:
   test-authsvc:
     uses: ./.github/workflows/test-authsvc-container-jobs.yaml
-
+    secrets: inherit
   test-userPost:
     needs: test-authsvc
     runs-on: ubuntu-latest
