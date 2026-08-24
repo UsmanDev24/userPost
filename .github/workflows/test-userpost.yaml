@@ -78,7 +78,7 @@ jobs:
         run: cd ./post-svc && bun install --frozen-lockfile
       
       - name: Postsvc Migrate DataBase
-        run: cd ./post-svc && bun run postbuild-dev
+        run: cd ./post-svc &&  bun prisma-dev generate && bun run postbuild-dev
         env:
            DOTENV_PRIVATE_KEY_DEVELOPMENT: ${{ secrets.POSTSVC_DOTENV_PRIVATE_KEY_DEVELOPMENT }}
 
