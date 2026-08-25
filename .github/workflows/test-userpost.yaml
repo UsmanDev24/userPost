@@ -10,7 +10,7 @@ jobs:
     needs: test-authsvc
     runs-on: ubuntu-latest
     container: 
-      image: oven/bun:1.4-alpine
+      image: oven/bun:1.4
 
     services:
       db-authsvc:
