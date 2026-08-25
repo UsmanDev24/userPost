@@ -1,4 +1,4 @@
-# userPost
+# userPost (Learning Project)
 
  [**userPost**](https://userpost.usman-ghani.dev) is a full-stack content platform where users can create  posts, manage their accounts, and interact with structured content.  
 
