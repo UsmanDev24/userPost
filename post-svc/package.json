@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "NODE_ENV=production dotenvx run -f .env.production  -- bun ./dist/app.mjs",
+    "start": "NODE_ENV=production dotenvx run -f .env.production  -- bun ./dist/server.mjs",
     "dev": "NODE_ENV=development dotenvx run -f .env.development  -- cross-env DEBUG=posts* bun ./src/server.mjs",
     "watch": "tailwindcss -i ./src/public/assets/stylesheets/input.css -o ./src/public/assets/stylesheets/styles.css --watch --minify",
     "prisma-dev": "dotenvx run --env-file=.env.development -- prisma --config=./src/prisma.config.ts",
@@ -15,7 +15,7 @@
     "postbuild-dev": "bun run prisma-dev migrate dev && bun run init-catg-dev",
     "postbuild-pro": "NODE_ENV=production bun run prisma-pro migrate deploy && bun run init-catg-pro",
     "copy-assets": "cp -r src/public/assets dist/public; cp -r src/views dist/; cp -r src/partials dist/",
-    "init-catg-pro": "dotenvx run --env-file=.env.production --overload -- bun ./dist/models/init-categories.mjs ",
+    "init-catg-pro": "NODE_ENV=production dotenvx run --env-file=.env.production -- bun ./dist/models/init-categories.mjs ",
     "init-pics-pro": "NODE_ENV=production dotenvx run --env-file=.env.production -- bun ./dist/models/set-prisma-pics.mjs",
     "test": "NODE_ENV=development dotenvx run --env-file=.env.development -- bun vitest"
   },
