@@ -10,7 +10,7 @@ updates:
       - "/post-svc"
       - "/auth-svc"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     open-pull-requests-limit: 0
     groups:
       bun-security:
