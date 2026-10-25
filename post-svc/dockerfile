@@ -1,4 +1,4 @@
-FROM oven/bun:1.4-alpine AS base
+FROM oven/bun:1.4-slim AS base
 RUN mkdir -p /usr/post-svc
 WORKDIR /usr/post-svc
 
@@ -24,7 +24,6 @@ EXPOSE 3000
 CMD [ "bun", "run", "dev" ]
 
 FROM base AS release
-RUN apk update && apk add curl && curl -sfS https://dotenvx.sh | sh
 WORKDIR /usr/post-svc
 COPY ./package.json .
 COPY ./.env.production .
@@ -32,5 +31,5 @@ COPY --from=install  /temp/prod/node_modules ./node_modules
 COPY --from=prerelease /post-svc/dist ./dist
 
 EXPOSE 3000
-CMD [ "dotenvx", "run" , "-f", ".env.production", "--", "bun", "./dist/server.mjs" ]
+CMD [ "bun", "start" ]
 
