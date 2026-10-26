@@ -8,7 +8,7 @@ export const port = normalizePort(process.env.PORT || '3000');
 
 
 export const server = createServer(app);
-export const io = new Server(server, { transports: ["websocket"] })
+export const io = new Server(server)
 server.listen(port);
 
 initSockets()

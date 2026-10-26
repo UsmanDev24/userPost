@@ -11,9 +11,7 @@ const postBody = document.getElementById("postBody");
 /** @type {TypedSocket} */
 
 console.log(IONAMESPACE)
-const socket = io(IONAMESPACE, {
-  transports: ["websocket"]
-})
+const socket = io(IONAMESPACE)
 
 socket.emit("join-room", POSTKEY)
 socket.on("room-joined", (message) => console.log(message));

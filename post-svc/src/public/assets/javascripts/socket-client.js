@@ -6,9 +6,7 @@
 /** @type {TypedSocket} */
 
 
-const socket = io(IONAMESPACE, {
-  transports: ["websocket"]
-})
+const socket = io(IONAMESPACE)
 class postRooms {
   constructor() {
     this.postListDiv = document.getElementById("postlist");

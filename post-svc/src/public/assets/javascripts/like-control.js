@@ -2,9 +2,7 @@ let SOCKET;
 try {
   if (socket) SOCKET = socket
 } catch (error) {
-  SOCKET = io(IONAMESPACE, {
-    transports: ["websocket"]
-  })
+  SOCKET = io(IONAMESPACE)
   console.error(error)
 }
 
